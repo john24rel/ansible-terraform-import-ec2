@@ -1,36 +1,75 @@
-- hosts: localhost
-  vars:
-     destdir: /prod/sec/
-  tasks:
-  - name: ec2 security group information fetch
-    ec2_instance_info:
-      profile: mm
-      region: "us-east-1"
-      filters:
-         instance-id: i-064153b3c054d3233
-  #           instance.group-name: zabbix
-    register: result
-
-  - name:  Creating a dictionary of Security Group IDs and Names
-    set_fact: 
-      secdict: "{{ secdict | default ([]) + [ { 'name': item.key_name, 'id': item.instance_id,} ] }} "
-    with_items:
-      "{{ result.instances}}"
-    loop_control:
-      label: "{{ item.instance_id}}"
+ - name: Security Group Playbook
+   hosts: localhost
+   vars:
+      destdir: /prod/sec/
+      itemstochange: ['arn\s+=.+$','\sid\s+=.+$','owner_id\s+=.+$','instance_state\s+=.+$','primary_network_interface_id\s+=.+$','public_dns\s+=.+$','public_ip\s+=.+$','private_dns\s+=.+$','device_name\s+=.+$','volume_id\s+=.+$']
       
-  - name: terraform Destroy 
-    shell: |
-      terraform init
-      terraform fmt
-      terraform validate
-      terraform destroy
-    args:
-      chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
-    loop: "{{secdict}}"
-    register: tfvalidate
-    failed_when: "'Success' not in tfvalidate.stdout"
- 
-  
+   tasks:
+    - name: ec2 security group information fetch
+      ec2_instance_info:
+        profile: mm
+        region: "us-east-1"
+        filters:
+           instance-id: i-064153b3c054d3233
+#           instance.group-name: zabbix
+      register: result
 
-   
+    - name:  Creating a dictionary of Security Group IDs and Names
+      set_fact: 
+        secdict: "{{ secdict | default ([]) + [ { 'name': item.key_name, 'id': item.instance_id,} ] }} "
+      with_items:
+        "{{ result.instances}}"
+      loop_control:
+        label: "{{ item.instance_id}}"
+
+    - name: Create the Directory  
+      file:
+        path: "{{destdir}}/{{item.name}}{{item.id[0:7]}}" # required. Path to the file being managed.
+        state: directory 
+      register: dircrt
+      loop: "{{secdict}}"
+
+    - name: Terraform Import
+      shell: |
+        echo -e 'provider "aws" {\n\tregion = "us-east-1"\n} \n\nresource  "aws_instance" "web" {\n\n}' > main.tf
+        terraform init
+        . ~/.aws/credentials.sh
+        terraform import aws_instance.web {{item.id}} 
+        echo -e 'provider "aws" {\n\tregion = "us-east-1"\n} \n' > main.tf
+        terraform show -no-color >> main.tf
+        pwd && ls -lrt
+        terraform fmt
+      args: 
+        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+      loop: "{{secdict}}"
+      when: dircrt is changed
+
+    - name: Change config
+      lineinfile:
+        path: "{{destdir}}/{{item.0.name}}{{item.0.id[0:7]}}/main.tf"
+        regexp: "{{ item.1 }}"
+        state: absent
+        backup: yes
+      with_nested:
+        - "{{ secdict }}"
+        - "{{ itemstochange }}"
+      
+    - name: Terraform Validate
+      shell: |
+        terraform validate 
+        mv main.tf instance.tf
+        rm -rf main.tf*
+      args:
+        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+      loop: "{{secdict}}"
+      register: tfvalidate
+      failed_when: "'Success' not in tfvalidate.stdout"
+      
+    - name: Terraform Destroy
+      shell: |
+        terraform destroy --auto-approve
+      args:
+        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+      loop: "{{secdict}}"
+      register: tfvalidate
+      failed_when: "'Success' not in tfvalidate.stdout"
