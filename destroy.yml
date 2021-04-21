@@ -1,5 +1,5 @@
-   hosts: localhost
-   tasks: 
+ hosts: localhost
+ tasks: 
  - name: Terraform destroy
    shell: |
      echo -e 'provider "aws" {\n\tregion = "us-east-1"\n} \n\nresource  "aws_instance" "web" {\n\n}' > main.tf
