@@ -2,14 +2,14 @@
    vars:
       destdir: /prod/sec/
    tasks:
-    - name: Terraform Destroy
-      shell: |
-        terraform init
-        . ~/.aws/credentials.sh
-        terraform fmt
-        terraform validate
-        terraform destroy
-        pwd && ls -lrt
-      args: 
-        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+   - name: Terraform Destroy
+     shell: |
+       terraform init
+       . ~/.aws/credentials.sh
+       terraform fmt
+       terraform validate
+       terraform destroy
+       pwd && ls -lrt
+     args: 
+       chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
    
