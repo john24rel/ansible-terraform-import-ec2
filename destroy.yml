@@ -2,13 +2,6 @@
    vars:
       destdir: /prod/sec/
    tasks:
-    - name:  Creating a dictionary of Security Group IDs and Names
-      set_fact: 
-        secdict: "{{ secdict | default ([]) + [ { 'name': item.key_name, 'id': item.instance_id,} ] }} "
-      with_items:
-        "{{ result.instances}}"
-      loop_control:
-        label: "{{ item.instance_id}}"
     - name: Terraform Destroy
       shell: |
         terraform init
