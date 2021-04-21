@@ -10,7 +10,7 @@
         profile: mm
         region: "us-east-1"
         filters:
-          # instance-id: i-064153b3c054d3233
+           instance-id: i-064153b3c054d3233
 #           instance.group-name: zabbix
       register: result
 
