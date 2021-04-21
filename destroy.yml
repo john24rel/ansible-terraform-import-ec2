@@ -1,0 +1,13 @@
+ - name: Terraform Import
+      shell: |
+        echo -e 'provider "aws" {\n\tregion = "us-east-1"\n} \n\nresource  "aws_instance" "web" {\n\n}' > main.tf
+        terraform init
+        . ~/.aws/credentials.sh
+        terraform fmt
+        terraform validate
+        terraform destroy
+        pwd && ls -lrt
+      args: 
+        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+      loop: "{{secdict}}"
+      when: dircrt is changed
