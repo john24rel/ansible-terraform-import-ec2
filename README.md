@@ -8,6 +8,7 @@ wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_am
 unzip terraform*
 mv terraform  /usr/bin
 terraform -v
+mkdir ~/.aws/
 ```
 ## only when using AWS_ACCESS_KEY_ID
 ## create a file called 
