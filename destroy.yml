@@ -2,7 +2,7 @@
    vars:
       destdir: /prod/sec/
    tasks:
-   - name: Terraform Destroy
+     name: Terraform Destroy
      shell: |
        terraform init
        . ~/.aws/credentials.sh
