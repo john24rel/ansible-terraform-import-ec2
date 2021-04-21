@@ -9,6 +9,7 @@ unzip terraform*
 mv terraform  /usr/bin
 terraform -v
 mkdir ~/.aws/
+git clone https://github.com/john24rel/ansible-terraform-import-ec2.git
 ```
 ## only when using AWS_ACCESS_KEY_ID
 ## create a file called 
