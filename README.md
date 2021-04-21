@@ -29,9 +29,13 @@ export AWS_SECRET_ACCESS_KEY=
 ```
 ansible -i localhost or vm host -m ping
 ```
-## RUN PLAYBOOk
+## RUN PLAYBOOK
 ```
 ansible-playbook  terraform-import-ec2.yml 
+```
+## DESTROY INSTANCE
+```
+ansible-playbook destroy.yml
 ```
 
 
