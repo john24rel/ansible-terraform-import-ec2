@@ -11,5 +11,4 @@
       pwd && ls -lrt
     args: 
       chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
-    loop: "{{secdict}}"
-    when: dircrt is changed
+   
