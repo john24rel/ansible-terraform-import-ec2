@@ -10,8 +10,8 @@
         profile: mm
         region: "us-east-1"
         filters:
-          # instance-id: i-08a1e1334b562f0cd 
-          instance.group-name: zabbix
+          # instance-id: i-064153b3c054d3233
+#           instance.group-name: zabbix
       register: result
 
     - name:  Creating a dictionary of Security Group IDs and Names
