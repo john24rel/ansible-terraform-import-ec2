@@ -1,15 +1,31 @@
-- hosts: localhost
-  vars:
+ - hosts: localhost
+   vars:
       destdir: /prod/sec/
-  tasks:
-  - name: Terraform Destroy
-    shell: |
-      terraform init
-      . ~/.aws/credentials.sh
-      terraform fmt
-      terraform validate
-      terraform destroy
-      pwd && ls -lrt
-    args: 
-      chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+   tasks:
+    - name: ec2 security group information fetch
+      ec2_instance_info:
+        profile: mm
+        region: "us-east-1"
+        filters:
+          # instance-id: i-064153b3c054d3233
+#           instance.group-name: zabbix
+      register: result
+
+    - name:  Creating a dictionary of Security Group IDs and Names
+      set_fact: 
+        secdict: "{{ secdict | default ([]) + [ { 'name': item.key_name, 'id': item.instance_id,} ] }} "
+      with_items:
+        "{{ result.instances}}"
+      loop_control:
+        label: "{{ item.instance_id}}"
+    - name: Terraform Destroy
+      shell: |
+        terraform init
+        . ~/.aws/credentials.sh
+        terraform fmt
+        terraform validate
+        terraform destroy
+        pwd && ls -lrt
+      args: 
+        chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
    
