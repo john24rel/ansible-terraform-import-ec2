@@ -67,6 +67,7 @@
       
     - name: Terraform Destroy
       shell: |
+        . ~/.aws/credentials.sh
         terraform destroy --auto-approve
       args:
         chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
