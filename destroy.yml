@@ -1,15 +1,15 @@
-- name: terraform Destroy 
   hosts: localhost
   vars:
      destdir: /prod/sec/
   tasks:
+  - name: terraform Destroy 
     shell: |
-      terraform init
-      . ~/.aws/credentials.sh
-      terraform fmt
-      terraform validate
-      terraform destroy
-      pwd && ls -lrt
+      "terraform init"
+      ". ~/.aws/credentials.sh"
+      "terraform fmt"
+      "terraform validate"
+      "terraform destroy"
+      "pwd && ls -lrt"
     args: 
       chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
    
