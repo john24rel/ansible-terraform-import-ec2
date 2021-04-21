@@ -57,6 +57,8 @@
     - name: Terraform Validate
       shell: |
         terraform validate 
+        mv main.tf instance.tf
+        rm -rf main.tf*
       args:
         chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
       loop: "{{secdict}}"
