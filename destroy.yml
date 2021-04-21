@@ -4,12 +4,16 @@
   tasks:
   - name: terraform Destroy 
     shell: |
-      "terraform init"
-      ". ~/.aws/credentials.sh"
-      "terraform fmt"
-      "terraform validate"
-      "terraform destroy"
-      "pwd && ls -lrt"
-    args: 
-      chdir: /prod/sec/maci-06415/
+      terraform init
+      terraform fmt
+      terraform validate
+      terraform destroy
+    args:
+      chdir: "{{destdir}}/{{item.name}}{{item.id[0:7]}}"
+    loop: "{{secdict}}"
+    register: tfvalidate
+    failed_when: "'Success' not in tfvalidate.stdout"
+ 
+  
+
    
