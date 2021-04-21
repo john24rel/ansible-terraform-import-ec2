@@ -1,4 +1,4 @@
-  hosts: localhost
+- hosts: localhost
   vars:
      destdir: /prod/sec/
   tasks:
