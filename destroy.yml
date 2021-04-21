@@ -1,4 +1,4 @@
--  name: terraform Destroy 
+ - name: terraform Destroy 
    hosts: localhost
    vars:
       destdir: /prod/sec/
