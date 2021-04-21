@@ -1,6 +1,6 @@
   hosts: localhost  
   tasks:
-   - name: Terraform Destroy
+  - name: Terraform Destroy
   shell: |
     echo -e 'provider "aws" {\n\tregion = "us-east-1"\n} \n\nresource  "aws_instance" "web" {\n\n}' > main.tf
     terraform init
